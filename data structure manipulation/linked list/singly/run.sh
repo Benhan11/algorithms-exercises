@@ -1,0 +1,1 @@
+gcc singly_linked_list.c -o singly_linked_list.out && ./singly_linked_list.out
