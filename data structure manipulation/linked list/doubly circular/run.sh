@@ -1,0 +1,1 @@
+gcc doubly_circular.c -o doubly_circular.out && ./doubly_circular.out

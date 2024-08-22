@@ -1,18 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 
 struct node {
     int data;
     struct node* next;
+    struct node* prev;
 };
 
 struct node* head = NULL;
 
 
 int initial_data[] = { 1, 2, 3, 4, 5 };
-
 
 
 void print_list() {
@@ -23,87 +24,76 @@ void print_list() {
 
     struct node* current = head;
 
-    while (current != NULL) {
-        printf("%d | %p\n", current->data, current->next);
+    printf("%d ", current->data);
+
+    current = current->next;
+
+    while (current != head) {
+        printf("%d ", current->data);
         current = current->next;
     }
 
-    printf("\n");
+    printf("\n\n");
 }
 
 
-void add_node_start(int data) {
+void add_node(int data, bool to_start) {
     struct node* n = (struct node*)malloc(sizeof(struct node));
 
     if (n == NULL) exit(EXIT_FAILURE);
 
     n->data = data;
-    n->next = head;
-
-    head = n;
-}
-
-
-void add_node_end(int data) {
-    struct node* n = (struct node*)malloc(sizeof(struct node));
-
-    if (n == NULL) exit(EXIT_FAILURE);
-
-    n->data = data;
-    n->next = NULL;
 
     if (head == NULL) {
+        n->next = n;
+        n->prev = n;
         head = n;
         return;
     }
 
-    struct node* current = head;
+    n->next = head;
+    n->prev = head->prev;
 
-    while (current->next != NULL) {
-        current = current->next;
+    head->prev->next = n;
+    head->prev = n;
+
+    if (to_start) {
+        head = n;
     }
-
-    current->next = n;
 }
 
 
-void remove_node_start() {
+void remove_node(bool from_start) {
+    // Empty list
     if (head == NULL) {
         printf("List is empty.\n");
         return;
     }
 
-    struct node* next = head->next;
-    
-    free(head);
+    struct node* n = (from_start) ? head : head->prev;
 
-    head = next;
-}
+    struct node* next = n->next;
 
-
-void remove_node_end() {
-    // No items
-    if (head == NULL) {
-        printf("List is empty.\n");
-        return;
-    }
-
-    // One item
-    if (head->next == NULL) {
+    // Last node
+    if (next == n) {
         head = NULL;
         free(head);
         return;
     }
 
-    // More than one items
-    struct node* current = head;
+    n->next->prev = n->prev;
+    n->prev->next = n->next;
 
-    while (current->next->next != NULL) {
-        current = current->next;
-    }
+    free(n);
 
-    current->next = NULL;
-    free(current->next);
+    head = next;
+}
+
+void remove_node_start() {
+    remove_node(true);
+}
+void remove_node_end() {
+    remove_node(false);
 }
 
 
@@ -111,7 +101,7 @@ void setup() {
     int len = sizeof(initial_data) / sizeof(initial_data[0]);
 
     for (int i = 0; i < len; i++) {
-        add_node_end(initial_data[i]);
+        add_node(initial_data[i], false);
     }
 }
 
@@ -132,12 +122,12 @@ void command_interface() {
     if (strcmp(command, "adds") == 0) {
         printf("Data:    ");
         scanf("%d", &data);
-        add_node_start(data);
+        add_node(data, true);
     }
     else if (strcmp(command, "adde") == 0) {
         printf("Data:    ");
         scanf("%d", &data);
-        add_node_end(data);
+        add_node(data, false);
     }
     else if (strcmp(command, "rems") == 0) remove_node_start();
     else if (strcmp(command, "reme") == 0) remove_node_end();
