@@ -1,0 +1,1 @@
+go build bfs.go && .\bfs.exe
