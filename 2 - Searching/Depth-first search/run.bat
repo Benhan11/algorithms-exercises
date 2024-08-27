@@ -1,0 +1,1 @@
+go build dfs.go && .\dfs.exe
