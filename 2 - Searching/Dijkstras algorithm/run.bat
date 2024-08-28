@@ -1,0 +1,1 @@
+go build dijkstra.go && .\dijkstra.exe
