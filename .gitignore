@@ -1,5 +1,9 @@
-exercises.md
+*
+!/**/
+!*.*
 
+exercises.md
 *.out
 *.class
 *.exe
+target/
