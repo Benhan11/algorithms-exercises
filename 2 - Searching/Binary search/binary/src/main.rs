@@ -1,4 +1,5 @@
 use lazy_static::lazy_static;
+use std::io::{self, Write};
 
 
 lazy_static! {
@@ -7,9 +8,28 @@ lazy_static! {
 
 
 fn main() {
-    guess_number(7834);
+    ui();
 }
 
+fn ui() {
+    println!("Welcome to the guessing game!");
+    print!("Guess a number between 0-10000: ");
+    io::stdout().flush().expect("Failed to flush stdout");
+
+    let mut input = String::new();
+
+    match io::stdin().read_line(&mut input) {
+        Ok(_) => {
+            let number: u32 = input.trim().parse().expect("Please enter a valid number...");
+            println!();
+            guess_number(number);
+        }
+        Err(err) => {
+            println!("Invalid number, err:\n{}", err);
+        }
+    }
+    ui();
+}
 
 // Guess number using binary search
 fn guess_number(number: u32) {
